@@ -10,6 +10,7 @@ from sentence_transformers import SentenceTransformer
 import keras.models
 import sqlite3
 
+
 # получаем токен бота и создаем объекты бота и деспетчера
 with open("token.txt", "r") as f:
     token = f.readline()
@@ -67,12 +68,14 @@ async def start(mes: types.Message):
 async def hello(mes, group):
 
     if not group:
-        text = (f"Привет, {mes.from_user.first_name}, я твой ИИ санитар!\nНапиши мне, что думаешь, и я скажу, какое у тебя психическое расстройство.")
+        text = (f"Привет, {mes.from_user.first_name}, я твой ИИ санитар!\nНапиши мне, что думаешь, и я скажу, какое у тебя психическое расстройство.\n"
+                "Ты можешь менять модель определения диагноза и формат вывода, посмотри мои команды")
     else:
-        text = (f"Привет всем! Я ваш ИИ санитар.\nЯ определяю психическое расстройство по сообщению пациента. "+
-                 "Чтобы я увидел ваше сообщение и дал вам диагноз, начните его с обращения 'Санитар', например:\n"+
-                 "Санитар, мне кажется, что меня не существует.\n" + 
-                 "Так же вы можете ответить собеседнику словом 'Санитар', и я напишу его диагноз")
+        text = (f"Привет всем! Я ваш ИИ санитар.\nЯ определяю психическое расстройство по сообщению пациента. "
+                 "Чтобы я увидел ваше сообщение и дал вам диагноз, начните его с обращения 'Санитар', например:\n"
+                 "Санитар, мне кажется, что меня не существует.\n"
+                 "Так же вы можете ответить собеседнику словом 'Санитар', и я напишу его диагноз\n"
+                 "Вы можете менять модель определения диагноза и формат вывода, посмотрите мои команды")
 
     # выводиться сообщение
     await bot.send_message(chat_id=mes.chat.id, text=text)
@@ -84,13 +87,8 @@ async def menu(mes: types.Message):
 
     # делаем кнопки
     markup = types.InlineKeyboardMarkup(inline_keyboard = [
-        [
-            types.InlineKeyboardButton(text = "Задать модель", callback_data="set_model"),
-            types.InlineKeyboardButton(text = "Задать способ вывода", callback_data="set_output")
-        ],
-        [
-            types.InlineKeyboardButton(text = "Добавить в группу", url="https://t.me/durkachatbot?startgroup=botstart")
-        ]
+            [types.InlineKeyboardButton(text = "Задать модель", callback_data="set_model")],
+            [types.InlineKeyboardButton(text = "Задать способ вывода", callback_data="set_output")]
     ])
 
     # получаем текушую модель и способ вывода для этого чата
@@ -266,7 +264,7 @@ async def сorpsman(mes: types.Message):
 # обработа собщения
 @dp.message()
 async def some_message(mes: types.Message):
-    
+
     # если сообщение из нового чата (бота только что добавили) добавляем id в базу и пишем приветствие
     if is_new_chat(mes.chat.id):
         add_id(mes.chat.id)
